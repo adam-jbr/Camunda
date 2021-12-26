@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1">
+  <bpmn:process id="fyp-bp-process" isExecutable="true">
+    <bpmn:userTask id="login" name="login" camunda:candidateUsers="admin">
+      <bpmn:incoming>Flow_0ji40dq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ufi00o</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="credentials" name="check credentials">
+      <bpmn:incoming>Flow_1ufi00o</bpmn:incoming>
+      <bpmn:outgoing>Flow_06411ug</bpmn:outgoing>
+      <bpmn:outgoing>isStudent</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1ufi00o" sourceRef="login" targetRef="credentials" />
+    <bpmn:sequenceFlow id="Flow_06411ug" name="isProfessor" sourceRef="credentials" targetRef="addproject">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isProfessor == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="isStudent" name="isStudent" sourceRef="credentials" targetRef="Select_Project">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isProfessor == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Select_Project" name="Select Project">
+      <bpmn:incoming>isStudent</bpmn:incoming>
+      <bpmn:incoming>Flow_04h1gva</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qlnqmc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1qlnqmc" sourceRef="Select_Project" targetRef="projectValidator" />
+    <bpmn:serviceTask id="projectValidator" name="Check Project Validity" camunda:delegateExpression="${projectValidator}">
+      <bpmn:incoming>Flow_1qlnqmc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gwmrc5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0rozw3k" name="project added">
+      <bpmn:incoming>Flow_1mspk8a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1mspk8a" sourceRef="addproject" targetRef="Event_0rozw3k" />
+    <bpmn:endEvent id="Event_0zgapb4" name="project chosen">
+      <bpmn:incoming>Flow_1fh1fnb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0gwmrc5" sourceRef="projectValidator" targetRef="Gateway_0gahp47" />
+    <bpmn:startEvent id="Event_175d05f">
+      <bpmn:outgoing>Flow_0ji40dq</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0ji40dq" sourceRef="Event_175d05f" targetRef="login" />
+    <bpmn:userTask id="addproject" name="Add Project">
+      <bpmn:incoming>Flow_06411ug</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mspk8a</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0gahp47">
+      <bpmn:incoming>Flow_0gwmrc5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fh1fnb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04h1gva</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1fh1fnb" name="isValid" sourceRef="Gateway_0gahp47" targetRef="Event_0zgapb4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${projectIsValid == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_04h1gva" name="notValid" sourceRef="Gateway_0gahp47" targetRef="Select_Project">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${projectIsValid == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="fyp-bp-process">
+      <bpmndi:BPMNEdge id="Flow_0ji40dq_di" bpmnElement="Flow_0ji40dq">
+        <di:waypoint x="198" y="237" />
+        <di:waypoint x="270" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gwmrc5_di" bpmnElement="Flow_0gwmrc5">
+        <di:waypoint x="870" y="350" />
+        <di:waypoint x="965" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mspk8a_di" bpmnElement="Flow_1mspk8a">
+        <di:waypoint x="690" y="120" />
+        <di:waypoint x="772" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qlnqmc_di" bpmnElement="Flow_1qlnqmc">
+        <di:waypoint x="690" y="350" />
+        <di:waypoint x="770" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03fnb6h_di" bpmnElement="isStudent">
+        <di:waypoint x="490" y="262" />
+        <di:waypoint x="490" y="350" />
+        <di:waypoint x="590" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="483" y="303" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06411ug_di" bpmnElement="Flow_06411ug">
+        <di:waypoint x="490" y="212" />
+        <di:waypoint x="490" y="120" />
+        <di:waypoint x="590" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="481" y="163" width="57" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ufi00o_di" bpmnElement="Flow_1ufi00o">
+        <di:waypoint x="370" y="237" />
+        <di:waypoint x="465" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fh1fnb_di" bpmnElement="Flow_1fh1fnb">
+        <di:waypoint x="1015" y="350" />
+        <di:waypoint x="1132" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1059" y="332" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04h1gva_di" bpmnElement="Flow_04h1gva">
+        <di:waypoint x="990" y="325" />
+        <di:waypoint x="990" y="230" />
+        <di:waypoint x="640" y="230" />
+        <di:waypoint x="640" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="796" y="212" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_08mft2c_di" bpmnElement="login">
+        <dc:Bounds x="270" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14nig3b_di" bpmnElement="credentials" isMarkerVisible="true">
+        <dc:Bounds x="465" y="212" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="525" y="230" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kx1nlp_di" bpmnElement="Select_Project">
+        <dc:Bounds x="590" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p1nind_di" bpmnElement="projectValidator">
+        <dc:Bounds x="770" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0rozw3k_di" bpmnElement="Event_0rozw3k">
+        <dc:Bounds x="772" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="145" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_175d05f_di" bpmnElement="Event_175d05f">
+        <dc:Bounds x="162" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1npt0ml_di" bpmnElement="addproject">
+        <dc:Bounds x="590" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0zgapb4_di" bpmnElement="Event_0zgapb4">
+        <dc:Bounds x="1132" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1114" y="375" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0gahp47_di" bpmnElement="Gateway_0gahp47" isMarkerVisible="true">
+        <dc:Bounds x="965" y="325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
